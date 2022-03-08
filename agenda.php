@@ -2,6 +2,33 @@
 //RF3 Vamos a establecer una variable de error
 
 $error = null;
+$msg = null;
+
+//Creamos las funciones necesarias para obtener el error:
+
+//paso $nombre por referencia para poder modificarlo (quitándole espacios en blanco)
+function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
+{
+    $error = null;
+    $nombre = trim($nombre);
+    if ($nombre === "")
+    {
+        $msg = "Introduce un nombre para el contacto";
+        $error = true;
+    }
+    else if ($agenda === [])
+    {
+        if ($telefono === "")
+        {
+            $msg = "Introduce un teléfono para el contacto";
+            $error = true;
+        }
+        else
+            $error = null;
+    }
+
+    return $error;
+}
 
 // RF1  Si he apretado submit
 
@@ -13,60 +40,50 @@ if (isset ($submit))
 
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
     $telefono = $_POST['telefono'];
+    $agenda = $_POST['agenda'] ?? [];
     var_dump($nombre);
     var_dump($telefono);
 
-    $error = valida_contacto($nombre,$telefono);
-    var_dump($error);
     var_dump($submit);
-}
+    $error = valida_contacto($nombre, $telefono, $agenda, $msg);
 
-/*Identica los posibles errores a considerar:
-   1.- El nombre está vacío
-   2.- El teléfono no es numérico
-   3.-
-*/
-//Creamos las funciones necesarias para obtener el error:
+    var_dump($error);
+    var_dump($msg);
+//Si error es null realizamos la accion:
 
-function valida_contacto($nombre,$telefono)
-{
-    if($nombre === "")
-        $error = "Introduce un nombre para el contacto";
+    if (is_null($error))
+    {
+        switch ($submit)
+        {
+            case("anadir"):
 
-    else if ($telefono === "")
-        $error = "Introduce un teléfono para el contacto";
+                $actualizar = true;
+                //Le asigna un nuevo nombre con el valor teléfono al array agenda
+                $agenda [$nombre] = $telefono;
+                var_dump($agenda);
+                # si teléfono está vacío eliminara el contacto de la agenda
+                if ($telefono === "")
+                {
+                    unset($agenda[$nombre]);
+                    $msg = "Se ha borrado el contacto: $nombre de la agenda";
+                }
+                else
+                {
+                    if (isset($agenda[$nombre]))
+                        $msg = "Se ha añadido el contacto: $nombre";
+                }
+                $borrar_todos = false;
+                break;
 
-    else
-        $error = null;
+            case("borrar_todos"):
 
-        return $error;
-}
-
-/*
-RF 4, el kernel del ejercicio:
- Ahora ya tenemos los datos del usuario RF1 y posible error RF 2
- Actuamos en consecuencia:
-
-//Si no  hay error realizamos la acción selecciona (add o borrar)
-*/
-
-//Realizamos la acción seleccionada (borrar, actualizar )
-if (!$error)
-{
-    switch ($submit){
-        case("anadir"): $anadir = true ;
-            break;
-        case("borrar"): $borrar = true  ;
-            break;
-        case("borrar_todos"): $borrar_todos = true;
-            break;
-
+                $agenda = [];
+                $msg = "Se han eliminado todos los contactos";
+                break;
+        }
     }
-
 }
 
-//Generamos un mensaje , ya que la acción añadir puede ser una modificación del teléfono
-#}
 
 ?>
 
@@ -83,7 +100,7 @@ if (!$error)
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS propio -->
-    <!-- <link rel="stylesheet" type="text/css" href="assets/css/style.css"/> -->
+    <link rel="stylesheet" type="text/css" href="style.css"/>
 
 </head>
 <body>
@@ -104,7 +121,7 @@ if (!$error)
                 <section class="mb-3">
                     <h4 class="display-5"> Añadir contactos </h4>
                     <form action="agenda.php" method="POST">
-                        <fieldset>
+                        <fieldset class="mb-3">
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre</label>
                                 <input placeholder="Juan" name="nombre" type="text"
@@ -115,34 +132,45 @@ if (!$error)
                                 <input placeholder="000111222" name="telefono" type="number"
                                        class="form-control" id="telefono">
                             </div>
-                            <button type="submit" name="submit" value="anadir" class="btn btn-success submit"> Añadir </button>
-                            <button type="submit" name="submit" value="borrar" class="btn btn-warning submit"> Borrar </button>
-                            <button type="submit" name="submit" value="borrar_todos" class="btn btn-danger submit"> Borrar todos </button>
+                            <button type="submit" name="submit" value="anadir" class="btn btn-success submit">
+                                Actualizar
+                            </button>
+                            <button type="submit" name="submit" value="borrar_todos" class="btn btn-danger submit">
+                                Borrar todos
+                            </button>
                             <?php
-                            //foreach ($agenda as $nombre => $tel) {
-                            //   echo "<input type='hidden' name='agenda[$nombre]' value ='$tel'>\n";
-                            //} ?>
+                            foreach ($agenda as $nombre => $telefono)
+                                echo "<input type='hidden' name='agenda[$nombre]' value ='$telefono'>";
+                            ?>
                         </fieldset>
                     </form>
+                    <p class="info-extra"> Introduce un contacto listado con el teléfono vacío para eliminarlo </p>
                 </section>
                 <?php
-                //Si hay error, informamos de ello
-                if($error)
-                    echo "<div class='alert alert-danger' role='alert'> $error </div> ";
-
-                if($anadir)
-                    echo "<div class='alert alert-success' role='alert'> El contacto: 'x' ha sido añadido correctamente </div> ";
-
-                if($borrar)
-                    echo "<div class='alert alert-info' role='alert'> El contacto: 'x' ha sido eliminado </div> ";
-
-                if($borrar_todos)
-                    echo "<div class='alert alert-warning' role='alert'> Se han borrado todos los contactos </div> ";
+                //Mensaje de información
+                if ($msg)
+                    echo "<div class='alert alert-info' role='alert'> $msg </div> ";
                 ?>
             </div>
             <!-- Lista contactos -->
             <div class="col col-md-6">
                 <h4 class="display-5"> Mis contactos </h4>
+                <?php
+                //si se agrega un contacto aparece esto:
+                if ($actualizar) {
+                    echo "<fieldset class='tabla-contactos p-3 mb-2'>";
+                    foreach ($agenda as $nombre => $telefono) {
+                        echo "<h6>Nombre:</h6>";
+                        echo "<p> $nombre </p>";
+
+                        echo "<h6>Teléfono:</h6>";
+                        echo "<p> $telefono </p>";
+
+                        echo "<hr>";
+                    }
+                    echo "</fieldset>";
+                }
+                ?>
             </div>
         </div>
 </main>

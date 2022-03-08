@@ -1,0 +1,10 @@
+.tabla-contactos
+{
+    border: double 1px ;
+    display: block;
+}
+
+.info-extra
+{
+    color: rgba(0,0,0,0.6);
+}
