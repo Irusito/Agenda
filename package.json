@@ -1,0 +1,22 @@
+{
+  "name": "agenda",
+  "version": "1.0.0",
+  "description": "El enunciado de esta práctica está en el wiki [Práctica de la agenda](https://es.wikieducator.org/Usuario:ManuelRomero/ProgramacionWeb/INAEM2021/Arrays/practica)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Irusito/Agenda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Irusito/Agenda/issues"
+  },
+  "homepage": "https://github.com/Irusito/Agenda#readme",
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  }
+}

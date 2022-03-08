@@ -48,7 +48,7 @@ if ($error) {
 </head>
 <body>
 
-<form action="index.php" method="POST">
+<form action="agenda.php" method="POST">
     <?php
     foreach ($agenda as $nobmre => $tel) {
         echo "<input type='hidden' name='agenda[$nombre]' value ='$tel'>\n";
