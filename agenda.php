@@ -1,12 +1,14 @@
 <?php
+//RF3 Vamos a establecer una variable de error
 
 $error = null;
+
 // RF1  Si he apretado submit
 
 $submit = $_POST['submit'] ?? null;
 
-if (isset ($submit)) {
-
+if (isset ($submit))
+{
 // RF2 Leer valores del formulario (nombre, tel, agenda)
 
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
@@ -16,19 +18,16 @@ if (isset ($submit)) {
 
     $error = valida_contacto($nombre,$telefono);
     var_dump($error);
+    var_dump($submit);
 }
-
-
-//RF3 Vamos a establecer una variable de error
 
 /*Identica los posibles errores a considerar:
    1.- El nombre está vacío
    2.- El teléfono no es numérico
    3.-
 */
+//Creamos las funciones necesarias para obtener el error:
 
-//Creamos las funciones necesarias para
-//Obtener el error
 function valida_contacto($nombre,$telefono)
 {
     if($nombre === "")
@@ -50,13 +49,24 @@ RF 4, el kernel del ejercicio:
 
 //Si no  hay error realizamos la acción selecciona (add o borrar)
 */
-#if ($error) {
 
-#} else {
 //Realizamos la acción seleccionada (borrar, actualizar )
+if (!$error)
+{
+    switch ($submit){
+        case("anadir"): $anadir = true ;
+            break;
+        case("borrar"): $borrar = true  ;
+            break;
+        case("borrar_todos"): $borrar_todos = true;
+            break;
+
+    }
+
+}
+
 //Generamos un mensaje , ya que la acción añadir puede ser una modificación del teléfono
 #}
-
 
 ?>
 
@@ -105,9 +115,9 @@ RF 4, el kernel del ejercicio:
                                 <input placeholder="000111222" name="telefono" type="number"
                                        class="form-control" id="telefono">
                             </div>
-                            <button type="submit" name="submit" class="btn btn-success submit"> Añadir </button>
-                            <button type="submit" name="submit" class="btn btn-warning submit"> Borrar </button>
-                            <button type="submit" name="submit" class="btn btn-danger submit"> Borrar todos </button>
+                            <button type="submit" name="submit" value="anadir" class="btn btn-success submit"> Añadir </button>
+                            <button type="submit" name="submit" value="borrar" class="btn btn-warning submit"> Borrar </button>
+                            <button type="submit" name="submit" value="borrar_todos" class="btn btn-danger submit"> Borrar todos </button>
                             <?php
                             //foreach ($agenda as $nombre => $tel) {
                             //   echo "<input type='hidden' name='agenda[$nombre]' value ='$tel'>\n";
@@ -118,8 +128,16 @@ RF 4, el kernel del ejercicio:
                 <?php
                 //Si hay error, informamos de ello
                 if($error)
-                    echo "<div class='alert alert-danger' role='alert'> $error </div> "
+                    echo "<div class='alert alert-danger' role='alert'> $error </div> ";
 
+                if($anadir)
+                    echo "<div class='alert alert-success' role='alert'> El contacto: 'x' ha sido añadido correctamente </div> ";
+
+                if($borrar)
+                    echo "<div class='alert alert-info' role='alert'> El contacto: 'x' ha sido eliminado </div> ";
+
+                if($borrar_todos)
+                    echo "<div class='alert alert-warning' role='alert'> Se han borrado todos los contactos </div> ";
                 ?>
             </div>
             <!-- Lista contactos -->
