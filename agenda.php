@@ -11,20 +11,16 @@ function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
 {
     $error = null;
     $nombre = trim($nombre);
-    if ($nombre === "")
-    {
+    if ($nombre === "") {
         $msg = "Introduce un nombre para el contacto";
         $error = true;
-    }
-    else if ($agenda === [])
-    {
-        if ($telefono === "")
-        {
+    } else if ($agenda === []) {
+        if ($telefono === "") {
             $msg = "Introduce un teléfono para el contacto";
             $error = true;
-        }
-        else
+        } else
             $error = null;
+
     }
 
     return $error;
@@ -34,8 +30,7 @@ function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
 
 $submit = $_POST['submit'] ?? null;
 
-if (isset ($submit))
-{
+if (isset ($submit)) {
 // RF2 Leer valores del formulario (nombre, tel, agenda)
 
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
@@ -51,64 +46,60 @@ if (isset ($submit))
     var_dump($msg);
 //Si error es null realizamos la accion:
 
-    if (is_null($error))
-    {
-        switch ($submit)
-        {
-            case("anadir"):
-
+    switch ($submit) {
+        case("actualizar"):
+            if (is_null($error)) {
                 $actualizar = true;
                 //Le asigna un nuevo nombre con el valor teléfono al array agenda
                 $agenda [$nombre] = $telefono;
                 var_dump($agenda);
                 # si teléfono está vacío eliminara el contacto de la agenda
-                if ($telefono === "")
-                {
+                if ($telefono === "") {
                     unset($agenda[$nombre]);
-                    $msg = "Se ha borrado el contacto: $nombre de la agenda";
-                }
-                else
-                {
+                    $msg = "Se ha borrado el contacto: '$nombre' de la agenda";
+                } else {
                     if (isset($agenda[$nombre]))
-                        $msg = "Se ha añadido el contacto: $nombre";
+                        $msg = "Se ha añadido el contacto: '$nombre' ";
                 }
                 $borrar_todos = false;
                 break;
+            }
+            break;
+        case("borrar_todos"):
 
-            case("borrar_todos"):
-
+            if($agenda == []) {
+                $msg = "Todavía no hay contactos que borrar";
+                var_dump($agenda);
+            }
+            else{
                 $agenda = [];
                 $msg = "Se han eliminado todos los contactos";
-                break;
-        }
+                var_dump($agenda);
+            }
+            break;
     }
-}
 
+}
 
 ?>
 
 <!doctype html>
 <html lang="es">
 <head>
-
     <title>Agenda</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-
     <!-- Bootstrap CSS -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- CSS propio -->
     <link rel="stylesheet" type="text/css" href="style.css"/>
-
 </head>
 <body>
 <header class=" bg-dark navborder">
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="agenda.php">
-                <h1 class="logotipo"> Agenda </h1>
+                <h1 class="logotipo"> Mi Agenda </h1>
             </a>
         </div>
     </nav>
@@ -132,7 +123,7 @@ if (isset ($submit))
                                 <input placeholder="000111222" name="telefono" type="number"
                                        class="form-control" id="telefono">
                             </div>
-                            <button type="submit" name="submit" value="anadir" class="btn btn-success submit">
+                            <button type="submit" name="submit" value="actualizar" class="btn btn-success submit">
                                 Actualizar
                             </button>
                             <button type="submit" name="submit" value="borrar_todos" class="btn btn-danger submit">
@@ -157,35 +148,35 @@ if (isset ($submit))
                 <h4 class="display-5"> Mis contactos </h4>
                 <?php
                 //si se agrega un contacto aparece esto:
-                if ($actualizar) {
-                    echo "<fieldset class='tabla-contactos p-3 mb-2'>";
-                    foreach ($agenda as $nombre => $telefono) {
-                        echo "<h6>Nombre:</h6>";
-                        echo "<p> $nombre </p>";
+                if ($_POST['submit'] === "actualizar") {
+                    if ($agenda !== []) {
+                        echo "<fieldset class='tabla-contactos p-3 mb-2'>";
+                        foreach ($agenda as $nombre => $telefono) {
+                            echo "<h6>Nombre:</h6>";
+                            echo "<p> $nombre </p>";
 
-                        echo "<h6>Teléfono:</h6>";
-                        echo "<p> $telefono </p>";
+                            echo "<h6>Teléfono:</h6>";
+                            echo "<p> $telefono </p>";
 
-                        echo "<hr>";
+                            echo "<hr>";
+                        }
+                        echo "</fieldset>";
                     }
-                    echo "</fieldset>";
                 }
                 ?>
             </div>
         </div>
 </main>
-<footer class="bg-secondary pt-2 pb-2 ">
+<footer class="bg-dark pt-2 pb-2 ">
     <div class="container">
         <div class="row">
             <nav class="menu-footer">
                 <div class="text-center">
-                    <!-- <h6 class="text-white"> Página de Rubén © </h6> -->
+                     <h6 class="text-white"> Página de Rubén © </h6>
                 </div>
             </nav>
         </div>
     </div>
 </footer>
-<!-- Bootstrap JS -->
-<!-- <script src="node_modules/bootstrap/js/bootstrap.bundle.min.js"></script> -->
 </body>
 </html>
