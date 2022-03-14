@@ -15,7 +15,7 @@ function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
         $msg = "Introduce un nombre para el contacto";
         $error = true;
     } else if ($agenda === []) {
-        if ($telefono === "") {
+        if ($telefono == false) {
             $msg = "Introduce un teléfono para el contacto";
             $error = true;
         } else
@@ -34,7 +34,7 @@ if (isset ($submit)) {
 // RF2 Leer valores del formulario (nombre, tel, agenda)
 
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
-    $telefono = $_POST['telefono'];
+    $telefono = filter_input(INPUT_POST, "telefono", FILTER_VALIDATE_INT);
     $agenda = $_POST['agenda'] ?? [];
     var_dump($nombre);
     var_dump($telefono);
@@ -54,7 +54,7 @@ if (isset ($submit)) {
                 $agenda [$nombre] = $telefono;
                 var_dump($agenda);
                 # si teléfono está vacío eliminara el contacto de la agenda
-                if ($telefono === "") {
+                if ($telefono == false) {
                     unset($agenda[$nombre]);
                     $msg = "Se ha borrado el contacto: '$nombre' de la agenda";
                 } else {
