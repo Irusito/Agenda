@@ -22,10 +22,8 @@ function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
             $error = null;
 
     }
-
     return $error;
 }
-
 // RF1  Si he apretado submit
 
 $submit = $_POST['submit'] ?? null;
@@ -36,53 +34,65 @@ if (isset ($submit)) {
     $nombre = filter_input(INPUT_POST, "nombre", FILTER_SANITIZE_STRING);
     $telefono = filter_input(INPUT_POST, "telefono", FILTER_VALIDATE_INT);
     $agenda = $_POST['agenda'] ?? [];
-    var_dump($nombre);
-    var_dump($telefono);
 
-    var_dump($submit);
     $error = valida_contacto($nombre, $telefono, $agenda, $msg);
 
-    var_dump($error);
-    var_dump($msg);
 //Si error es null realizamos la accion:
 
-    switch ($submit) {
+    switch ($submit)
+    {
         case("actualizar"):
-            if (is_null($error)) {
-                $actualizar = true;
-                //Le asigna un nuevo nombre con el valor teléfono al array agenda
-                $agenda [$nombre] = $telefono;
-                var_dump($agenda);
+            if (is_null($error))
+            {
+
                 # si teléfono está vacío eliminara el contacto de la agenda
-                if ($telefono == false) {
-                    unset($agenda[$nombre]);
-                    $msg = "Se ha borrado el contacto: '$nombre' de la agenda";
-                } else {
-                    if (isset($agenda[$nombre]))
-                        $msg = "Se ha añadido el contacto: '$nombre' ";
+                if ($telefono == false)
+                {
+                    if (array_key_exists($nombre, $agenda))
+                    {
+                        unset($agenda[$nombre]);
+                        unset($agenda[$telefono]);
+                        $msg = "Se ha borrado el contacto: '$nombre' de la agenda";
+                    }
+                    else
+                    {
+                        $msg = "No se puede eliminar un contacto inexistente";
+                    }
                 }
-                $borrar_todos = false;
+                else
+                    //Le asigna el nombre con el valor teléfono al array agenda
+                {
+                    if (array_key_exists($nombre, $agenda))
+                    {
+                        $agenda [$nombre] = $telefono;
+                        $msg = "Se ha modificado el contacto: '$nombre' ";
+                        break;
+                    }
+                    else
+                    {
+                        $agenda [$nombre] = $telefono;
+                        $msg = "Se ha añadido el contacto: '$nombre' ";
+                    }
+                }
                 break;
             }
             break;
         case("borrar_todos"):
-
-            if($agenda == []) {
+            if($agenda == [])
+            {
                 $msg = "Todavía no hay contactos que borrar";
                 var_dump($agenda);
             }
-            else{
+            else
+            {
                 $agenda = [];
                 $msg = "Se han eliminado todos los contactos";
                 var_dump($agenda);
             }
             break;
     }
-
 }
-
 ?>
-
 <!doctype html>
 <html lang="es">
 <head>
