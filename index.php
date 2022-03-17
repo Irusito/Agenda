@@ -81,13 +81,11 @@ if (isset ($submit)) {
             if($agenda == [])
             {
                 $msg = "Todavía no hay contactos que borrar";
-                var_dump($agenda);
             }
             else
             {
                 $agenda = [];
                 $msg = "Se han eliminado todos los contactos";
-                var_dump($agenda);
             }
             break;
     }
@@ -108,7 +106,7 @@ if (isset ($submit)) {
 <header class=" bg-dark navborder">
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="agenda.php">
+            <a class="navbar-brand" href="index.php">
                 <h1 class="logotipo"> Mi Agenda </h1>
             </a>
         </div>
@@ -121,7 +119,7 @@ if (isset ($submit)) {
                 <!-- Formulario -->
                 <section class="mb-3">
                     <h4 class="display-5"> Añadir contactos </h4>
-                    <form action="agenda.php" method="POST">
+                    <form action="index.php" method="POST">
                         <fieldset class="mb-3">
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre</label>
