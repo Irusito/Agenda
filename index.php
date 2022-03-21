@@ -15,19 +15,16 @@ function valida_contacto(&$nombre, $telefono, $agenda, &$msg)
         $msg = "Introduce un nombre para el contacto";
         $error = true;
     } else if ($agenda === []) {
-        if ($telefono == false) {
+        if ($telefono === false) {
             $msg = "Introduce un teléfono para el contacto";
             $error = true;
-        } else
-            $error = null;
-
+        }
     }
     return $error;
 }
-// RF1  Si he apretado submit
 
 $submit = $_POST['submit'] ?? null;
-
+// RF1  Si he apretado submit
 if (isset ($submit)) {
 // RF2 Leer valores del formulario (nombre, tel, agenda)
 
@@ -39,37 +36,25 @@ if (isset ($submit)) {
 
 //Si error es null realizamos la accion:
 
-    switch ($submit)
-    {
+    switch ($submit) {
         case("actualizar"):
-            if (is_null($error))
-            {
-
+            if (is_null($error)) {
                 # si teléfono está vacío eliminara el contacto de la agenda
-                if ($telefono == false)
-                {
-                    if (array_key_exists($nombre, $agenda))
-                    {
+                if ($telefono === false) {
+                    if (array_key_exists($nombre, $agenda)) {
                         unset($agenda[$nombre]);
-                        unset($agenda[$telefono]);
+
                         $msg = "Se ha borrado el contacto: '$nombre' de la agenda";
-                    }
-                    else
-                    {
+                    } else {
                         $msg = "No se puede eliminar un contacto inexistente";
                     }
-                }
-                else
-                    //Le asigna el nombre con el valor teléfono al array agenda
+                } else //Le asigna el nombre con el valor teléfono al array agenda
                 {
-                    if (array_key_exists($nombre, $agenda))
-                    {
+                    if (array_key_exists($nombre, $agenda)) {
                         $agenda [$nombre] = $telefono;
                         $msg = "Se ha modificado el contacto: '$nombre' ";
                         break;
-                    }
-                    else
-                    {
+                    } else {
                         $agenda [$nombre] = $telefono;
                         $msg = "Se ha añadido el contacto: '$nombre' ";
                     }
@@ -78,12 +63,9 @@ if (isset ($submit)) {
             }
             break;
         case("borrar_todos"):
-            if($agenda == [])
-            {
+            if ($agenda == []) {
                 $msg = "Todavía no hay contactos que borrar";
-            }
-            else
-            {
+            } else {
                 $agenda = [];
                 $msg = "Se han eliminado todos los contactos";
             }
@@ -180,7 +162,7 @@ if (isset ($submit)) {
         <div class="row">
             <nav class="menu-footer">
                 <div class="text-center">
-                     <h6 class="text-white"> Página de Rubén © </h6>
+                    <h6 class="text-white"> Página de Rubén © </h6>
                 </div>
             </nav>
         </div>
